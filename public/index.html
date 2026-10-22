@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cafe Costing & SOP</title>
+<style>
+:root{--bg:#faf6f1;--card:#fff;--tx:#2b1d14;--mu:#7a6a5e;--ac:#7a4a2b;--bd:#e6dccf;--ok:#2e7d32;--bad:#c62828;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1511;--card:#2a201a;--tx:#f1e8df;--mu:#b5a597;--ac:#d9a066;--bd:#43352b;--ok:#81c784;--bad:#ef9a9a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1511;--card:#2a201a;--tx:#f1e8df;--mu:#b5a597;--ac:#d9a066;--bd:#43352b;--ok:#81c784;--bad:#ef9a9a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0 auto;background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;max-width:900px;padding:12px}
+h1{font-size:20px;margin:4px 0}h2{font-size:16px;margin:18px 0 8px}
+.sub{color:var(--mu);font-size:13px;margin:0 0 10px}
+nav{display:flex;gap:6px;margin:10px 0;overflow-x:auto}
+nav button{flex:1;padding:9px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;font:inherit;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:10px}
+.w{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:6px 5px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{color:var(--mu);font-size:12px;font-weight:600}
+td.n,th.n{text-align:right}
+input,select{padding:6px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=number]{width:84px;text-align:right}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px}
+.k b{display:block;font-size:18px}.k span{font-size:12px;color:var(--mu)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.t{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--bd)}
+.t input{margin-top:3px;width:18px;height:18px;accent-color:var(--ac)}
+.t.d span{text-decoration:line-through;color:var(--mu)}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin:6px 0 10px}.bar i{display:block;height:100%;background:var(--ok)}
+.btn{padding:8px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;font:inherit;cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.note{font-size:12px;color:var(--mu)}
+</style></head><body>
+<h1>☕ Cafe Costing & SOP</h1>
+<p class="sub">Edit any number and everything recalculates. <span id="st">Loading…</span></p>
+<nav id="nav"></nav><div id="v"></div>
+<script>
+const API=window.__HATCHABLE__.api;
+const R={milk:["Milk (full cream)","L",56],cof:["Filter coffee powder","kg",550],sug:["Sugar","kg",45],rfl:["Rice flour","kg",70],rice:["Raw rice","kg",50],kk:["Kondakadalai","kg",110],urad:["Urad dal","kg",120],cp:["Kadalai paruppu","kg",110],toor:["Toor dal","kg",140],bes:["Besan","kg",90],sard:["Sardine (mathi)","kg",180],mack:["Mackerel (ayila)","kg",260],coc:["Coconut","each",30],oni:["Onion","kg",40],tom:["Tomato","kg",30],veg:["Vegetables (poriyal)","kg",50],curd:["Curd","L",60],tam:["Tamarind","kg",150],spi:["Masala powders","kg",400],gin:["Dry ginger powder","kg",500],jag:["Jaggery","kg",80],ban:["Raw banana","each",10],lem:["Lemon","each",6],oil:["Cooking oil","L",140],pap:["Papad","each",2],misc:["Salt, leaves, pickle (in ₹)","₹",1]};
+const REC={idi:[["rfl",.08],["oil",.005],["misc",.7]],kc:[["kk",.03],["coc",.08],["oni",.02],["spi",.003],["oil",.004]],cof:[["milk",.1],["cof",.007],["sug",.01]],mini:[["rice",.17],["mack",.07],["coc",.08],["tam",.005],["spi",.006],["oni",.03],["tom",.03],["oil",.01],["veg",.08],["toor",.01],["misc",4]],full:[["@mini",1],["sard",.075],["spi",.004],["oil",.02],["rfl",.005],["curd",.08],["pap",1],["misc",1]],vada:[["urad",.025],["oil",.015],["coc",.04],["cp",.005],["misc",.7]],baj:[["ban",.25],["bes",.03],["oil",.02],["rfl",.005],["spi",.0015],["coc",.02]],sun:[["kk",.045],["coc",.03],["oil",.005],["misc",.7]],koz:[["rfl",.04],["coc",.07],["jag",.02],["oil",.005],["misc",.5]],pan:[["rice",.035],["urad",.008],["oni",.02],["oil",.01],["coc",.04],["misc",.7]],suk:[["jag",.035],["gin",.006],["misc",.7]],paa:[["jag",.03],["gin",.002],["lem",.15],["misc",.7]]};
+const RN={idi:"Idiyappam (3 pcs)",kc:"Kadalai curry (1 serving)",cof:"Filter coffee (tumbler)",mini:"Mini fish meal",full:"Full fish meal",vada:"Medu vada",baj:"Bajji (3 pcs)",sun:"Sundal",koz:"Kozhukattai (2 pcs)",pan:"Paniyaram (4 pcs)",suk:"Sukku kaapi",paa:"Paanagam"};
+const M=[["combo","Morning combo (idiyappam, kadalai curry, coffee)",70,80],["cof","Filter coffee",25,20],["mini","Mini fish meal",110,30],["full","Full fish meal",180,30],["vada","Medu vada",18,30],["baj","Bajji (3 pcs)",30,20],["sun","Sundal",25,20],["koz","Kozhukattai (2 pcs)",25,15],["pan","Paniyaram (4 pcs)",30,35],["suk","Sukku kaapi",20,20],["paa","Paanagam",25,20]];
+const OH=[["rent","Shop rent",15000],["s1","Salary: coffee master",14000],["s2","Salary: curry cook",18000],["s3","Salary: snack cook",14000],["s4","Salary: counter",11000],["s5","Salary: helper",8000],["own","Owner’s drawing",0],["el","Electricity",4500],["gas","LPG gas",9500],["wat","Water",800],["mk","Marketing",3000],["rep","Repairs",2000],["cl","Cleaning and uniforms",1500],["lic","Licences (yearly ÷ 12)",417],["acc","Accounting and billing app",1000],["msc","Miscellaneous",2000]];
+const SOP=[["Opening","6:00",["Check gas, water, power and fridge temperature","Hand wash, clean apron, hair cover; sick staff do not handle food","Sanitise counters, boards and tumblers","Set the prep board from today’s plan"]],
+["Coffee and idiyappam","6:30",["Fresh decoction; discard after 4 hours","Boil fresh milk; never mix old and new","Idiyappam in small batches, covered and warm","Keep kadalai curry above 60°C"]],
+["Fish and lunch prep","9:00",["Check fish: clear eyes, red gills, firm flesh, no bad smell","Keep on ice or at 4°C or below; cook the same day","Update today’s fish board and price","Cook curry in batches; fry fish to order"]],
+["Lunch service","12:00",["Use fixed ladles and bowls for every portion","Hot food 60°C or above; curd 5°C or below","Takeaway: banana-leaf-lined box, curry packed separately","Fish sold out? Switch to the veg or egg meal"]],
+["Evening snacks","15:00",["Batters ready by 3 PM, same measures daily","Fresh oil daily; filter after use; discard if dark or foamy","Fry small batches; hold fried snacks 2 hours at most","Post today’s snack on WhatsApp status"]],
+["Closing","20:00",["Discard leftover fish, cut items and risky curry","Refrigerate usable items covered and dated","Deep clean stoves, fryer, floor and sinks","Count cash, match with sales, log wastage","Gas valves off, lights off, lock up"]],
+["Weekly and monthly","Sun",["Update ingredient rates (fish, coconut, oil)","Review food cost %, wastage and best sellers","Compare actual profit with the Profit tab","Check FSSAI licence and records are current"]]];
+const TABS=[["menu","Menu"],["rec","Recipes"],["rates","Rates"],["profit","Profit"],["sop","SOP"],["waste","Wastage"]];
+const today=()=>new Date().toLocaleDateString("en-CA");
+let S,W=[],tab="menu",timer;
+function defaults(){const s={rates:{},price:{},qty:{},oh:{},p:{days:30,waste:6,tk:30,pkg:6,tgt:38},sop:{},rec:JSON.parse(JSON.stringify(REC)),day:{d:today()}};
+for(const k in R)s.rates[k]=R[k][2];M.forEach(m=>{s.price[m[0]]=m[2];s.qty[m[0]]=m[3]});OH.forEach(o=>s.oh[o[0]]=o[2]);return s}
+function save(){const e=document.getElementById("st");e.textContent="Saving…";clearTimeout(timer);
+timer=setTimeout(()=>fetch(API+"/state",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(S)}).then(r=>{e.textContent=r.ok?"Saved to database":"Save failed"}).catch(()=>{e.textContent="Save failed"}),500)}
+const rc=k=>S.rec[k].reduce((s,[i,q])=>s+q*(i[0]=="@"?rc(i.slice(1)):S.rates[i]),0);
+const cost=id=>id=="combo"?rc("idi")+rc("kc")+rc("cof"):rc(id);
+const f0=n=>(n<0?"-":"")+"₹"+Math.round(Math.abs(n)).toLocaleString("en-IN"),f2=n=>"₹"+n.toFixed(2);
+function calc(){const p=S.p;let rev=0,food=0,q=0;
+M.forEach(m=>{const n=S.qty[m[0]];rev+=S.price[m[0]]*n;food+=cost(m[0])*n*(1+p.waste/100);q+=n});
+const pk=q*p.tk/100*p.pkg,fixed=Object.values(S.oh).reduce((a,b)=>a+b,0),cm=rev-food-pk;
+return{rev,food,pk,fixed,cm,q,net:cm*p.days-fixed,be:cm>0?fixed/p.days/(cm/rev):0}}
+const inp=(g,k,v,s)=>`<input type="number" step="${s||"any"}" min="0" data-g="${g}" data-k="${k}" value="${v}">`;
+function menu(){let h=`<div class="card w"><table><tr><th>Item</th><th class="n">Cost</th><th class="n">Price ₹</th><th class="n">Food cost</th><th class="n">Plates/day</th></tr>`;
+M.forEach(m=>{const c=cost(m[0]),pr=S.price[m[0]],fc=pr?c/pr*100:0;
+h+=`<tr><td>${m[1]}</td><td class="n">${f2(c)}</td><td class="n">${inp("price",m[0],pr)}</td><td class="n ${fc>S.p.tgt?"bad":"ok"}">${fc.toFixed(1)}%</td><td class="n">${inp("qty",m[0],S.qty[m[0]])}</td></tr>`});
+return h+`</table></div><div class="card">Target food cost % ${inp("p","tgt",S.p.tgt)}<p class="note">Red means above target. For fish meals, change the fish type or portion before raising the price.</p></div>`}
+function rec(){let h="";for(const id in S.rec){h+=`<h2>${RN[id]} <span class="note">${f2(rc(id))} per plate</span></h2><div class="card w"><table><tr><th>Ingredient</th><th class="n">Qty per plate</th></tr>`;
+S.rec[id].forEach((l,i)=>h+=`<tr><td>${l[0][0]=="@"?"Mini fish meal (base plate)":R[l[0]][0]+" ("+R[l[0]][1]+")"}</td><td class="n">${inp("rec",id+":"+i,l[1])}</td></tr>`);h+="</table></div>"}
+return h+`<p class="note">Quantities are estimates per plate. Weigh a real portion and correct them.</p>`}
+function rates(){let h=`<div class="card w"><table><tr><th>Ingredient</th><th>Unit</th><th class="n">Rate ₹</th></tr>`;
+for(const k in R)h+=`<tr><td>${R[k][0]}</td><td>${R[k][1]}</td><td class="n">${inp("rates",k,S.rates[k])}</td></tr>`;
+return h+`</table></div><p class="note">Estimated market rates. Replace with your supplier prices; check fish weekly.</p>`}
+function profit(){const c=calc(),p=S.p,d=p.days,K=(l,v,cl)=>`<div class="k"><span>${l}</span><b class="${cl||""}">${v}</b></div>`;
+let h=`<div class="g">${K("Revenue / day",f0(c.rev))}${K("Revenue / month",f0(c.rev*d))}${K("Food cost (with wastage)",c.rev?(c.food/c.rev*100).toFixed(1)+"%":"0%")}${K("Fixed overheads / month",f0(c.fixed))}${K("Net profit / month",f0(c.net),c.net<0?"bad":"ok")}${K("Break-even sales / day",f0(c.be))}</div>`;
+h+=`<h2>Scenarios</h2><div class="card w"><table><tr><th>Volume vs plan</th><th class="n">Revenue / month</th><th class="n">Net profit / month</th></tr>`;
+[.5,.7,1,1.2].forEach(m=>h+=`<tr><td>${m*100}%</td><td class="n">${f0(c.rev*d*m)}</td><td class="n ${c.cm*d*m-c.fixed<0?"bad":"ok"}">${f0(c.cm*d*m-c.fixed)}</td></tr>`);
+h+=`</table></div><p class="note">The default plate counts are optimistic for a new cafe. Judge the plan by the 50% and 70% rows.</p><h2>Settings</h2><div class="card w"><table>`;
+[["days","Operating days / month"],["waste","Wastage allowance %"],["tk","Takeaway share of orders %"],["pkg","Packaging per takeaway ₹"]].forEach(r=>h+=`<tr><td>${r[1]}</td><td class="n">${inp("p",r[0],p[r[0]])}</td></tr>`);
+h+=`</table></div><h2>Monthly overheads</h2><div class="card w"><table>`;
+OH.forEach(o=>h+=`<tr><td>${o[1]}</td><td class="n">${inp("oh",o[0],S.oh[o[0]])}</td></tr>`);
+return h+`</table></div><p class="note">Overheads are placeholders. Owner’s pay is zero; add it if you work in the cafe.</p>`}
+function sop(){const all=SOP.flatMap((s,i)=>s[2].map((_,j)=>i+"-"+j)),dn=all.filter(k=>S.sop[k]).length;
+let h=`<div class="card"><b>${dn} of ${all.length} done today</b><div class="bar"><i style="width:${dn/all.length*100}%"></i></div><button class="btn" id="rs">Clear ticks</button> <span class="note">Ticks reset automatically each new day.</span></div>`;
+SOP.forEach((s,i)=>{h+=`<h2>${s[0]} <span class="note">${s[1]}</span></h2><div class="card">`;
+s[2].forEach((t,j)=>{const k=i+"-"+j;h+=`<label class="t ${S.sop[k]?"d":""}"><input type="checkbox" data-g="sop" data-k="${k}" ${S.sop[k]?"checked":""}><span>${t}</span></label>`});h+="</div>"});
+return h+`<p class="note">Temperature and oil limits are common guidelines. Confirm against current FSSAI rules.</p>`}
+function waste(){const wk=new Date(Date.now()-6*864e5).toLocaleDateString("en-CA"),tot=W.filter(w=>w.day>=wk).reduce((a,w)=>a+w.cost,0);
+let h=`<div class="card"><div class="row"><input type="date" id="wd" value="${today()}"><select id="wi">${M.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join("")}</select><input type="number" id="wq" min="0" step="any" placeholder="Plates" style="width:80px"><input id="wr" placeholder="Reason" style="flex:1;min-width:120px"><button class="btn" id="wa">Add</button></div></div>`;
+h+=`<div class="g"><div class="k"><span>Wastage, last 7 days</span><b>${f0(tot)}</b></div></div><h2>Recent entries</h2><div class="card w"><table><tr><th>Date</th><th>Item</th><th class="n">Qty</th><th class="n">Cost</th><th>Reason</th><th></th></tr>`;
+W.forEach(w=>h+=`<tr><td>${w.day}</td><td>${w.item}</td><td class="n">${w.qty}</td><td class="n">${f0(w.cost)}</td><td>${w.reason||""}</td><td><button class="btn" data-del="${w.id}">✕</button></td></tr>`);
+return h+(W.length?"":`<tr><td colspan="6" class="note">No entries yet.</td></tr>`)+`</table></div><p class="note">Cost uses today’s plate cost. Compare the weekly total with your wastage allowance on the Profit tab.</p>`}
+function render(){document.getElementById("nav").innerHTML=TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]==tab?"on":""}">${t[1]}</button>`).join("");
+document.getElementById("v").innerHTML={menu,rec,rates,profit,sop,waste}[tab]();
+const r=document.getElementById("rs");if(r)r.onclick=()=>{S.sop={};save();render()};
+const a=document.getElementById("wa");if(a)a.onclick=addW}
+async function loadW(){try{W=await (await fetch(API+"/waste")).json();if(tab=="waste")render()}catch(e){}}
+async function addW(){const id=document.getElementById("wi").value,q=parseFloat(document.getElementById("wq").value);if(!(q>0))return;
+const item=M.find(m=>m[0]==id)[1];
+await fetch(API+"/waste",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({day:document.getElementById("wd").value,item,qty:q,reason:document.getElementById("wr").value,cost:cost(id)*q})});loadW()}
+document.addEventListener("click",async e=>{const d=e.target.closest("[data-del]");if(d){await fetch(API+"/waste?id="+d.dataset.del,{method:"DELETE"});loadW();return}
+const t=e.target.closest("[data-t]");if(t){tab=t.dataset.t;render();window.scrollTo(0,0);if(tab=="waste")loadW()}});
+document.addEventListener("change",e=>{const el=e.target,g=el.dataset.g;if(!g)return;
+const v=el.type=="checkbox"?el.checked:Math.max(0,parseFloat(el.value)||0);
+if(g=="rec"){const[i,x]=el.dataset.k.split(":");S.rec[i][x][1]=v}else S[g][el.dataset.k]=v;save();render()});
+(async()=>{S=defaults();try{const d=await (await fetch(API+"/state")).json();
+if(d)for(const k in S)if(d[k])Object.assign(S[k],d[k]);
+if(S.day.d!==today()){S.sop={};S.day.d=today();save()}
+document.getElementById("st").textContent="Saved to database"}catch(e){document.getElementById("st").textContent="Could not load saved data"}
+render()})();
+</script></body></html>

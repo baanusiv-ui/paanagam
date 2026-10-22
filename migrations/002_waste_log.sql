@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS waste_log (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), day date NOT NULL, item text NOT NULL, qty numeric NOT NULL, reason text, cost numeric NOT NULL DEFAULT 0, created_at timestamptz NOT NULL DEFAULT now())
