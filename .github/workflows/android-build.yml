@@ -1,4 +1,3 @@
-
 name: Build Cafe Costing SOP APK
 
 on:
@@ -29,14 +28,51 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Install Android SDK
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
       - name: Install Android platform
         run: |
-          sdkmanager "platform-tools" \
-            "platforms;android-35" \
-            "build-tools;35.0.0"
+          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+          yes | sdkmanager --licenses
+
+      - name: Create Capacitor configuration
+        run: |
+          cat > package.json <<'EOF'
+          {
+            "name": "cafe-costing-sop-android",
+            "version": "1.0.0",
+            "private": true,
+            "dependencies": {
+              "@capacitor/android": "7.4.3",
+              "@capacitor/core": "7.4.3"
+            },
+            "devDependencies": {
+              "@capacitor/cli": "7.4.3"
+            }
+          }
+          EOF
+
+          cat > capacitor.config.ts <<'EOF'
+          import type { CapacitorConfig } from '@capacitor/cli';
+
+          const config: CapacitorConfig = {
+            appId: 'com.paanagam.cafecostingsop',
+            appName: 'Cafe Costing SOP',
+            webDir: 'www',
+            server: {
+              url: 'https://cafe-costing-sop.hatchable.site/',
+              cleartext: false
+            }
+          };
+
+          export default config;
+          EOF
+
+          mkdir -p www
+          echo '<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>Loading Cafe Costing SOP...</body></html>' > www/index.html
 
       - name: Install Capacitor
         run: npm install
