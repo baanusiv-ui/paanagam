@@ -1,0 +1,5 @@
+# Hatchable project manifest. This file marks the folder as a
+# Hatchable project and declares the services it uses.
+# Reference: https://hatchable.com/docs/developers/config
+name = "Cafe Costing & SOP"
+description = "Menu costing, profit and break-even, SOP checklists and wastage log for a South Indian cafe QSR"
